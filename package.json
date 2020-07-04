@@ -1,0 +1,27 @@
+{
+  "name": "abnt",
+  "description": "Asar-based Bundles for Windows93",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "webpack",
+    "build:prod": "webpack --prod",
+    "build:dev": "webpack --dev"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/runtime": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dakedres/abnt.git"
+  },
+  "author": "Dakedres",
+  "license": "Apache-2.0"
+}
