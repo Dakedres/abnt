@@ -1,4 +1,5 @@
-const constants = require('../util/constants')
+const constants = require('../util/constants'),
+      PathUtil = require('../util/PathUtil')
 
 const { headerOffset, headerSizeIndex, uInt32Size } = constants.asar,
       { errors } = constants.app
@@ -48,9 +49,7 @@ class AsarHandler {
 
     this.header = JSON.parse(rawHeader)
     this.files = files
-    this.contents = crawlHeader(this.header.files) 
-
-    console.log('Handler:', this)
+    this.contents = crawlHeader(this.header.files)
   }
 
   // Only takes posix-like paths
@@ -59,18 +58,22 @@ class AsarHandler {
       if(currentItem.files) {
         const nextItem = currentItem.files[navigateTo]
 
-        if(!nextItem)
+        if(!nextItem) {
+          if(path == '/') // This breaks it lol
+            return this.header
+          
           throw errors.pathError(path, `${navigateTo} could not be found.`)
+        }
 
         return nextItem
-      } else {
+      } else {        
         throw errors.pathError(path, `${navigateTo} is not a directory.`)
       }
     }
- 
-    return path
+
+    return PathUtil
+      .normalize(path)
       .split('/')
-      .filter(dir => !!dir)
       .reduce(navigate, this.header)
   }
 
@@ -82,10 +85,7 @@ class AsarHandler {
   }
 
   exists(path) {
-    const normalizedPath = path
-      .split('/')
-      .filter(dir => !!dir)
-      .join('/')
+    const normalizedPath = PathUtil.normalize(path)
 
     return this.contents.includes(normalizedPath)
   }

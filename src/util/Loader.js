@@ -6,7 +6,7 @@ class Loader {
   }
 
   createElement(tag, resource, rel) {
-    const executor = resolve => {
+    const executor = (resolve, reject) => {
       const { document } = this,
             element = document.createElement(tag)
   

@@ -1,30 +1,34 @@
-const { utils } = window.$fs
-
 class PathUtil {
+  static normalize(path, ...otherFuncs) {
+    let split = path
+      .split('/')
+      .filter(dir => dir)
+
+    for(const func of otherFuncs)
+      split = func(split)
+    
+    return split.join('/')
+  }
+
   static resolve(path) {
     const scanPath = (array, dir, i) => {
-      const isRoot = array.slice(-1)[0] == '/' || (array.length == 0 && i > 0)
-      
-      if(isRoot)
-        return [ '/' ] 
-
       switch(dir) {
         case '.':
           return array
 
         case '..':
-          return array.slice(0, -1)
+          // Let's not get below root
+          return array.length > 1 ? array.slice(0, -1) : array
 
         default:
           return array.concat(dir)
       }
     }
     
-    return utils
-      .resolvePath(path)
-      .split('/')
-      .reduce(scanPath, [])
-      .join('/')
+    const scan = splitPath =>
+      splitPath.reduce(scanPath, [ '/' ])
+
+    return this.normalize(path, scan)
   }
 
   static join(left, right) {

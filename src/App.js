@@ -1,13 +1,12 @@
 const { $file, $fs } = window,
-      BundleHandler = require('./BundleHandler'),
-      promisify = require('./util/promisify'),
+      BundleManager = require('./BundleManager')
       constants = require('./util/constants'),
-      merge = require('./util/merge'),
-      ScriptAPI = require('./ScriptAPI')
+      merge = require('./util/merge')
 
-const openAsync = promisify($file.open),
-      { app } = constants,
+const { app } = constants,
       { utils } = $fs
+
+let bundleManager = new BundleManager()
 
 class App {
   constructor() {
@@ -23,36 +22,20 @@ class App {
   silent = true
   icon = constants.nt.defaultIcon
   accept = constants.asar.mimetype
-  ScriptAPI = ScriptAPI
+  bundleManager = bundleManager
 
   run(args, cli) {
     try {
       const path = utils.resolvePath(args[0])
     
-      this.openBundle(path)
+      this.open(path)
     } catch (err) {
       cli.log.error(`Could not open bundle:\n${err}`)
     }
   }
 
-  async openBundle(path) {
-    const arraybuffer = await openAsync(path, 'ArrayBuffer'),
-          buffer = Buffer.from(arraybuffer),
-          bundle = new BundleHandler(buffer, path)
-
-    if(this.debug.enabled) {
-      this.debug.instances.push({
-        path,
-        bundle
-      })
-    }
-
-    return await bundle.start()
-  }
-
-  debug = {
-    enabled: true,
-    instances: [],
+  open(...args) {
+    this.bundleManager.open(...args)
   }
 
   init = {
@@ -66,7 +49,7 @@ class App {
       const { _get } = window.le
 
       window.le._get = merge(_get, app.asarPatch)
-      window.le._bundles = []
+      window.le._bundles = bundleManager
     },
 
     iterateBoot() {
@@ -79,7 +62,7 @@ class App {
           if(utils.getExt(file) == 'abnt') {
             const path = bootPath + '/' + file
       
-            app.openBundle(path)
+            app.open(path)
           }
         }
       }
