@@ -1,5 +1,6 @@
 const { $file, $fs } = window,
-      BundleManager = require('./BundleManager')
+      BundleManager = require('./BundleManager'),
+      AsarHandler = require('./Bundle/AsarHandler')
       constants = require('./util/constants'),
       merge = require('./util/merge')
 
@@ -23,6 +24,12 @@ class App {
   icon = constants.nt.defaultIcon
   accept = constants.asar.mimetype
   bundleManager = bundleManager
+
+  // I should probably make AsarHandler it's own seperate
+  //   project sometime, but for now I'm just gonna expose
+  //   the library like this.
+  AsarHandler = AsarHandler
+  Buffer = Buffer
 
   run(args, cli) {
     try {
