@@ -1,7 +1,7 @@
 {
   "name": "abnt",
   "description": "Asar-based Bundles for Windows93",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "build": "webpack",
     "build:prod": "webpack --prod",
