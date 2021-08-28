@@ -44,7 +44,7 @@ const app = {
   errors: {
     pathError(path, reason) {
       class PathError extends Error {}
-      const message = [ `Invalid path "${path}"`, reason ].join(': ')
+      const message = [ , reason ].join(': ')
 
       return new PathError(message)
     },

@@ -29,7 +29,6 @@ class App {
   //   project sometime, but for now I'm just gonna expose
   //   the library like this.
   AsarHandler = AsarHandler
-  Buffer = Buffer
 
   run(args, cli) {
     try {

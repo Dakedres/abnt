@@ -9,6 +9,8 @@ const { headerOffset, headerSizeIndex, uInt32Size } = constants.asar,
 const alignInt = (i, alignment) =>
   i + (alignment - (i % alignment)) % alignment
 
+const textDecoder = new TextDecoder('utf-8')
+
 const crawlHeader = function self(files, dirname) {
   const prefix = itemName =>
     (dirname ? dirname + '/' : '') + itemName
@@ -33,9 +35,10 @@ const crawlHeader = function self(files, dirname) {
 class AsarHandler {
   constructor(buffer) {
     if(buffer.length > Number.MAX_SAFE_INTEGER)
-      throw new Error('This file is too big for AsarHandler to safely work with, sorry for the inconvenience.')
+      throw new Error('This file is too large for AsarHandler to safely work with, sorry for the inconvenience.')
 
-    const headerSize = buffer.readUInt32LE(headerSizeIndex),
+    const data = new DataView(buffer),
+          headerSize = data.getUint32(headerSizeIndex, true),
           // Pickle wants to align the headers so that the payload length is
           // always a multiple of 4. This means you'll get "padding" bytes
           // after the header if you don't round up the stored value.
@@ -44,12 +47,16 @@ class AsarHandler {
           // but it's whatever.
           headerEnd = headerOffset + headerSize,
           filesOffset = alignInt(headerEnd, uInt32Size),
-          rawHeader = buffer.slice(headerOffset, headerEnd).toString('utf-8'),
+          rawHeader = buffer.slice(headerOffset, headerEnd),
           files = buffer.slice(filesOffset)
 
-    this.header = JSON.parse(rawHeader)
+    this.header = JSON.parse( this._decodeString(rawHeader) )
     this.files = files
     this.contents = crawlHeader(this.header.files)
+  }
+
+  _decodeString(buffer) {
+    return textDecoder.decode(buffer)
   }
 
   // Only takes posix-like paths

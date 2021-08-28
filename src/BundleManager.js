@@ -36,8 +36,7 @@ class BundleManager extends Array {
   }
 
   async open(path) {
-    const arraybuffer = await openAsync(path, 'ArrayBuffer'),
-          buffer = Buffer.from(arraybuffer)
+    const buffer = await openAsync(path, 'ArrayBuffer')
 
     let bundle
 

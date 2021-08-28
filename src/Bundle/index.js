@@ -10,16 +10,6 @@ const { utils } = $fs,
       { configPath } = constants.bundle,
       { app, js } = constants
 
-const toArrayBuffer = buffer => {
-  const arraybuffer = new ArrayBuffer(buffer.length),
-        view = new Uint8Array(arraybuffer)
-
-  for(const i in buffer)
-    view[i] = buffer[i]
-
-  return arraybuffer
-}
-
 class Bundle extends AsarHandler {
   constructor(buffer, path, id) {
     super(buffer)
@@ -27,7 +17,7 @@ class Bundle extends AsarHandler {
     const exists = super.exists(configPath)
 
     if(exists) {
-      const configRaw = super.get(configPath).toString('utf-8')
+      const configRaw = this._decodeString( super.get(configPath) )
 
       this.config = new BundleConfig(JSON.parse(configRaw))
     } else {
@@ -44,16 +34,12 @@ class Bundle extends AsarHandler {
   }
 
   get(path) {
-    let arraybuffer = this.cache.get(path)
+    let buffer = this.cache.get(path)
 
-    if(!arraybuffer) {
-      const buffer = super.get(path)
+    if(!buffer)
+      this.cache.set(path, buffer = super.get(path) )
 
-      arraybuffer = toArrayBuffer(buffer)
-      this.cache.set(path, arraybuffer)
-    }
-
-    return arraybuffer
+    return buffer
   }
 
   async run() {
@@ -79,7 +65,7 @@ class Bundle extends AsarHandler {
     //
     // Done?
 
-    const code = super.get(path).toString('utf-8'),
+    const code = this._decodeString( super.get(path) ),
           scope = scopeObject == window ? 'this' : 'this.parent',
           api = js.getAPI(scope, path, this.id)
 

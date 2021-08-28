@@ -40,7 +40,6 @@ class BundleAPI {
     return new this.constructor(this._bundle, path)
   }
 
-
   /**
    * Resolves an absolute path in the bundle from the API's current working directory.
    * @param {String} path Relative path
@@ -51,7 +50,7 @@ class BundleAPI {
   }
 
   /**
-   * 
+   * Lists the contents of a directory
    * @param {String} path The path to the directory to list the contents of
    * @param {Boolean} asEntries Whether or not to return the entries as {@link Dirent} objects
    * @returns {Array<String>|Array<Dirent>}
@@ -64,6 +63,22 @@ class BundleAPI {
       new Dirent(name, !(value.executable === true))
 
     return asEntries ? Object.entries(files).map(toEntry) : Object.keys(files)
+  }
+
+  /**
+   * Checks if an entry exists
+   * @param {String} path The path to the directory or file to check
+   * @returns { Boolean } Whether or not the entry exists
+   */
+  access(path) {
+    const resolvedPath = this.resolveRelative(path)
+
+    try {
+      this._bundle.find(resolvedPath)
+      return true
+    } catch(e) {
+      return false
+    }
   }
 
   /**
@@ -82,13 +97,13 @@ class BundleAPI {
   }
 
   _open(path, format, formatCallback) {
-    const arraybuffer = this._bundle.get(path),
+    const buffer = this._bundle.get(path),
           ext = utils.getExt(path),
-          blob = new Blob([ arraybuffer ], { type: le._get.ext.mime[ext] })
+          blob = new Blob([ buffer ], { type: le._get.ext.mime[ext] })
 
     switch(format) {
       case 'ArrayBuffer':
-        return arraybuffer
+        return buffer
 
       case 'Blob':
         return blob
@@ -97,9 +112,7 @@ class BundleAPI {
         return URL.createObjectURL(blob)
 
       case 'String':
-        const buf = Buffer.from(arraybuffer)
-
-        return buf.toString('utf-8')
+        return this._bundle._decodeString(buffer)
 
       default:
         if(formatCallback)

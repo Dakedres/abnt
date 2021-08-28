@@ -27,6 +27,7 @@ Class for interacting with the data in the bundle
     * [.for(path)](#BundleAPI+for) ⇒ [<code>BundleAPI</code>](#BundleAPI)
     * [.resolveRelative(path)](#BundleAPI+resolveRelative) ⇒ <code>String</code>
     * [.readDir(path, asEntries)](#BundleAPI+readDir) ⇒ <code>Array.&lt;String&gt;</code> \| [<code>Array.&lt;Dirent&gt;</code>](#Dirent)
+    * [.access(path)](#BundleAPI+access) ⇒ <code>Boolean</code>
     * [.load(path, [window])](#BundleAPI+load) ⇒ <code>HTMLScriptElement</code>
     * [.open(path, format)](#BundleAPI+open) ⇒ <code>Promise</code>
     * [.openSync(path, format)](#BundleAPI+openSync) ⇒ <code>URL</code> \| <code>Blob</code> \| <code>ArrayBuffer</code> \| <code>String</code>
@@ -60,12 +61,26 @@ Resolves an absolute path in the bundle from the API's current working directory
 <a name="BundleAPI+readDir"></a>
 
 ### bundleAPI.readDir(path, asEntries) ⇒ <code>Array.&lt;String&gt;</code> \| [<code>Array.&lt;Dirent&gt;</code>](#Dirent)
+Lists the contents of a directory
+
 **Kind**: instance method of [<code>BundleAPI</code>](#BundleAPI)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | path | <code>String</code> | <code>.</code> | The path to the directory to list the contents of |
 | asEntries | <code>Boolean</code> | <code>false</code> | Whether or not to return the entries as [Dirent](#Dirent) objects |
+
+<a name="BundleAPI+access"></a>
+
+### bundleAPI.access(path) ⇒ <code>Boolean</code>
+Checks if an entry exists
+
+**Kind**: instance method of [<code>BundleAPI</code>](#BundleAPI)  
+**Returns**: <code>Boolean</code> - Whether or not the entry exists  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| path | <code>String</code> | The path to the directory or file to check |
 
 <a name="BundleAPI+load"></a>
 

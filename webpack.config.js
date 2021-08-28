@@ -4,10 +4,11 @@ const path = require('path'),
 let env = /^--([a-z]+)$/i.exec(process.argv[2])
 env = env ? env[1] : 'dev'
 
-console.log('fukin helpl')
+console.log('helpl')
 
 const config = {
   entry: path.join(__dirname, 'src/index.js'),
+  // entry: path.join(__dirname, 'src/Bundle/AsarHandler.js'),
   output: {
     path: path.join(__dirname, 'dist/'),
     filename: 'abnt.js'
